@@ -5,7 +5,7 @@
   "keywords": [
     "parser",
     "combinators",
-    "parsing"
+    "parsing",
     "parse"
   ],
   "homepage": "http://github.com/snd/pcom",
