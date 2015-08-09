@@ -16,10 +16,10 @@ module.exports =
       value: ''
       rest: ''
     test.deepEqual J.value('"\\"\\""'),
-      value: '\\"\\"'
+      value: '""'
       rest: ''
     test.deepEqual J.value('"\\"\n"'),
-      value: '\\"\n'
+      value: '"\n'
       rest: ''
     test.equal J.value(""), null
     test.equal J.value("\n"), null
