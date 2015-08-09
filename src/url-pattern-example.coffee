@@ -7,7 +7,7 @@ module.exports = U = {}
 
 U.wildcard = P.tag 'wildcard', P.string('*')
 
-U.name = P.concatMany1 P.charset 'a-zA-Z0-9'
+U.name = P.regex '^[a-zA-Z0-9]+'
 
 U.optional = P.tag(
   'optional'
