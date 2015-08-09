@@ -33,6 +33,23 @@ module.exports =
     test.equal parser(''), null
     test.done()
 
+  'regex': (test) ->
+    parser = P.regex('[a-zA-Z0-9]+')
+    test.deepEqual parser('foobar'),
+      value: 'foobar'
+      rest: ''
+    test.equal parser('_aa'), null
+    test.deepEqual parser('a'),
+      value: 'a'
+      rest: ''
+    test.equal parser('$foobar'), null
+    test.deepEqual parser('foo90$bar'),
+      value: 'foo90'
+      rest: '$bar'
+    test.equal parser('$'), null
+    test.equal parser(''), null
+    test.done()
+
   'charset': (test) ->
     parser = P.charset('a-zA-Z0-9-_ %')
     test.deepEqual parser('foobar'),
@@ -49,11 +66,88 @@ module.exports =
     test.equal parser(''), null
     test.done()
 
+  'firstChoice': (test) ->
+    parser = P.firstChoice(
+      P.string('f')
+      P.string('foo')
+      P.string('bar')
+      P.string('foobar')
+      P.string('barfoo')
+    )
+    test.equal parser(''), null
+    test.equal parser('a'), null
+    test.deepEqual parser('f'),
+      value: 'f'
+      rest: ''
+    test.deepEqual parser('foo'),
+      value: 'f'
+      rest: 'oo'
+    test.deepEqual parser('bar'),
+      value: 'bar'
+      rest: ''
+    test.deepEqual parser('foobar'),
+      value: 'f'
+      rest: 'oobar'
+    test.deepEqual parser('barfoo'),
+      value: 'bar'
+      rest: 'foo'
+    test.done()
+
+  'longestChoice': (test) ->
+    parser = P.longestChoice(
+      P.string('f')
+      P.string('foo')
+      P.string('bar')
+      P.string('foobar')
+      P.string('barfoo')
+    )
+    test.equal parser(''), null
+    test.equal parser('a'), null
+    test.deepEqual parser('f'),
+      value: 'f'
+      rest: ''
+    test.deepEqual parser('foo'),
+      value: 'foo'
+      rest: ''
+    test.deepEqual parser('bar'),
+      value: 'bar'
+      rest: ''
+    test.deepEqual parser('foobar'),
+      value: 'foobar'
+      rest: ''
+    test.deepEqual parser('barfoo'),
+      value: 'barfoo'
+      rest: ''
+    test.deepEqual parser('barfoot'),
+      value: 'barfoo'
+      rest: 't'
+    test.done()
+
   'concatMany1 charset': (test) ->
     parser = P.concatMany1(P.charset('a-zA-Z0-9-_ %'))
     test.deepEqual parser('foobar'),
       value: 'foobar'
       rest: ''
+    test.deepEqual parser('f%_.bar'),
+      value: 'f%_'
+      rest: '.bar'
+    test.deepEqual parser('f@bar'),
+      value: 'f'
+      rest: '@bar'
+    test.equal parser('@bar'), null
+    test.deepEqual parser('-'),
+      value: '-'
+      rest: ''
+    test.equal parser(''), null
+    test.equal parser('$aa'), null
+    test.done()
+
+  'concatMany1Till': (test) ->
+    parser = P.concatMany1Till(P.charset('a-zA-Z0-9-_ %'), P.string('b'))
+    test.equal parser('b'), null
+    test.deepEqual parser('foobar'),
+      value: 'foo'
+      rest: 'bar'
     test.deepEqual parser('f%_.bar'),
       value: 'f%_'
       rest: '.bar'
