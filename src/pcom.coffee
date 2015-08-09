@@ -94,13 +94,16 @@
 
   # returns result of the parser that consumes the most (leaves the shortest rest)
   # or the parser that comes first when two parsers are tied
-  P.longestChoice = (parsers) ->
+  P.longestChoice = (parsers...) ->
     (input) ->
       i = -1
       length = parsers.length
       bestResult = null
       while ++i < length
-        result = parsers[i] input
+        parser = parsers[i]
+        unless 'function' is typeof parser
+          throw new Error "parser passed at index `#{i}` into `longestChoice` is not of type `function` but of type `#{typeof parser}`"
+        result = parser input
         # left a longer rest?
         if result? and ((not bestResult?) or bestResult.rest.length > result.rest.length)
           bestResult = result
