@@ -292,6 +292,22 @@
     )
 
 ################################################################################
+# for debugging
+
+  P.log = (id, parser) ->
+    (input) ->
+      output = parser input
+      msg =
+        id: id
+        input: input
+      if output?
+        msg.consumed = input.slice(0, input.length - output.rest.length)
+        msg.rest = output?.rest
+        msg.value = output?.value
+        console.log msg
+      return output
+
+################################################################################
 # return from factory
 
   return P
